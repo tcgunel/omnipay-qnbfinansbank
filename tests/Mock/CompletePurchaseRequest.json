@@ -1,0 +1,7 @@
+{
+  "merchantId": "QNBShop001",
+  "merchantUser": "QNBUser",
+  "merchantPassword": "QNBPass123",
+  "merchantStorekey": "QNBStoreKey456",
+  "testMode": true
+}

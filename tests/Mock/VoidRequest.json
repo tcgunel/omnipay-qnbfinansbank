@@ -1,0 +1,8 @@
+{
+  "merchantId": "QNBShop001",
+  "merchantUser": "QNBUser",
+  "merchantPassword": "QNBPass123",
+  "testMode": true,
+  "orderNumber": "ORDER-12345",
+  "currency": "TRY"
+}

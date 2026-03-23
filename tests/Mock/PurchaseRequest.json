@@ -1,0 +1,20 @@
+{
+  "merchantId": "QNBShop001",
+  "merchantUser": "QNBUser",
+  "merchantPassword": "QNBPass123",
+  "merchantStorekey": "QNBStoreKey456",
+  "testMode": true,
+  "amount": "100.00",
+  "currency": "TRY",
+  "transactionId": "ORDER-12345",
+  "installment": "0",
+  "secure": false,
+  "card": {
+    "number": "4355084355084358",
+    "expiryYear": "2030",
+    "expiryMonth": "12",
+    "cvv": "000",
+    "firstName": "Test",
+    "lastName": "User"
+  }
+}
