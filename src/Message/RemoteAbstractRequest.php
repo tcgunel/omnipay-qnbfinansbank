@@ -8,63 +8,63 @@ use Omnipay\QnbFinansbank\Traits\PurchaseGettersSetters;
 
 abstract class RemoteAbstractRequest extends AbstractRequest
 {
-	use PurchaseGettersSetters;
+    use PurchaseGettersSetters;
 
-	/** @var string */
-	protected $endpoint = '';
+    /** @var string */
+    protected $endpoint = '';
 
-	/**
-	 * @throws InvalidRequestException
-	 */
-	protected function validateSettings(): void
-	{
-		$this->validate('merchantId', 'merchantUser', 'merchantPassword');
-	}
+    /**
+     * @throws InvalidRequestException
+     */
+    protected function validateSettings(): void
+    {
+        $this->validate('merchantId', 'merchantUser', 'merchantPassword');
+    }
 
-	/**
-	 * Get the API endpoint URL based on test mode.
-	 *
-	 * @return string
-	 */
-	public function getApiUrl(): string
-	{
-		if ($this->getTestMode()) {
-			return 'https://vpostest.qnbfinansbank.com/Gateway/Default.aspx';
-		}
+    /**
+     * Get the API endpoint URL based on test mode.
+     *
+     * @return string
+     */
+    public function getApiUrl(): string
+    {
+        if ($this->getTestMode()) {
+            return 'https://vpostest.qnbfinansbank.com/Gateway/Default.aspx';
+        }
 
-		return 'https://vpos.qnbfinansbank.com/Gateway/Default.aspx';
-	}
+        return 'https://vpos.qnbfinansbank.com/Gateway/Default.aspx';
+    }
 
-	/**
-	 * Post form-encoded data to the QNB Finansbank VPos API.
-	 *
-	 * @param array<string, mixed> $data
-	 * @return string
-	 */
-	protected function postForm(array $data): string
-	{
-		$httpResponse = $this->httpClient->request(
-			'POST',
-			$this->getApiUrl(),
-			[
-				'Content-Type' => 'application/x-www-form-urlencoded',
-			],
-			http_build_query($data)
-		);
+    /**
+     * Post form-encoded data to the QNB Finansbank VPos API.
+     *
+     * @param array<string, mixed> $data
+     * @return string
+     */
+    protected function postForm(array $data): string
+    {
+        $httpResponse = $this->httpClient->request(
+            'POST',
+            $this->getApiUrl(),
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+            http_build_query($data)
+        );
 
-		return (string) $httpResponse->getBody();
-	}
+        return (string) $httpResponse->getBody();
+    }
 
-	/**
-	 * Get card attribute safely.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	protected function getCardAttribute(string $key)
-	{
-		return $this->getCard() ? $this->getCard()->$key() : null;
-	}
+    /**
+     * Get card attribute safely.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    protected function getCardAttribute(string $key)
+    {
+        return $this->getCard() ? $this->getCard()->$key() : null;
+    }
 
-	abstract protected function createResponse($data);
+    abstract protected function createResponse($data);
 }
