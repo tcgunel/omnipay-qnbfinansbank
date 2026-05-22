@@ -35,7 +35,7 @@ class PurchaseTest extends TestCase
         $this->assertEquals('5', $data['MbrId']);
 
         // Verify merchant info
-        $this->assertEquals('QNBShop001', $data['MerchantId']);
+        $this->assertEquals('QNBShop001', $data['MerchantID']);
         $this->assertEquals('QNBUser', $data['UserCode']);
         $this->assertEquals('QNBPass123', $data['UserPass']);
 
@@ -132,7 +132,7 @@ class PurchaseTest extends TestCase
         $this->assertEquals('POST', $response->getRedirectMethod());
 
         $this->assertEquals(
-            'https://vpostest.qnbfinansbank.com/Gateway/Default.aspx',
+            'https://vpostest.qnb.com.tr/Gateway/Default.aspx',
             $response->getRedirectUrl()
         );
 
@@ -162,7 +162,7 @@ class PurchaseTest extends TestCase
         $response = $request->initialize($options)->send();
 
         $this->assertEquals(
-            'https://vpos.qnbfinansbank.com/Gateway/Default.aspx',
+            'https://vpos.qnb.com.tr/Gateway/Default.aspx',
             $response->getRedirectUrl()
         );
     }
@@ -190,14 +190,14 @@ class PurchaseTest extends TestCase
         $httpRequest = $requests[0];
         $this->assertEquals('POST', $httpRequest->getMethod());
         $this->assertStringContainsString(
-            'vpostest.qnbfinansbank.com/Gateway/Default.aspx',
+            'vpostest.qnb.com.tr/Gateway/Default.aspx',
             (string) $httpRequest->getUri()
         );
 
         // Verify the body is form-encoded with MbrId
         $body = (string) $httpRequest->getBody();
         $this->assertStringContainsString('MbrId=5', $body);
-        $this->assertStringContainsString('MerchantId=QNBShop001', $body);
+        $this->assertStringContainsString('MerchantID=QNBShop001', $body);
     }
 
     public function test_non3d_purchase_sends_http_request_error()
@@ -235,7 +235,7 @@ class PurchaseTest extends TestCase
         $httpRequest = $requests[0];
 
         $this->assertStringContainsString(
-            'vpos.qnbfinansbank.com/Gateway/Default.aspx',
+            'vpos.qnb.com.tr/Gateway/Default.aspx',
             (string) $httpRequest->getUri()
         );
     }

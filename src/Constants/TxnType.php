@@ -9,4 +9,6 @@ class TxnType
     public const VOID = 'Void';
 
     public const REFUND = 'Refund';
+
+    public const ORDER_INQUIRY = 'OrderInquiry';
 }

@@ -5,6 +5,7 @@ namespace Omnipay\QnbFinansbank\Tests\Feature;
 use Omnipay\QnbFinansbank\Message\CompletePurchaseRequest;
 use Omnipay\QnbFinansbank\Message\PurchaseRequest;
 use Omnipay\QnbFinansbank\Message\RefundRequest;
+use Omnipay\QnbFinansbank\Message\TransactionQueryRequest;
 use Omnipay\QnbFinansbank\Message\VoidRequest;
 use Omnipay\QnbFinansbank\Tests\TestCase;
 
@@ -57,6 +58,13 @@ class GatewayTest extends TestCase
         $request = $this->gateway->refund([]);
 
         $this->assertInstanceOf(RefundRequest::class, $request);
+    }
+
+    public function test_gateway_transaction_query_returns_correct_request()
+    {
+        $request = $this->gateway->transactionQuery([]);
+
+        $this->assertInstanceOf(TransactionQueryRequest::class, $request);
     }
 
     public function test_gateway_getters_setters()

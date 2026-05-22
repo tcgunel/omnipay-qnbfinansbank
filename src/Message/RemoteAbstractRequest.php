@@ -29,10 +29,10 @@ abstract class RemoteAbstractRequest extends AbstractRequest
     public function getApiUrl(): string
     {
         if ($this->getTestMode()) {
-            return 'https://vpostest.qnbfinansbank.com/Gateway/Default.aspx';
+            return 'https://vpostest.qnb.com.tr/Gateway/Default.aspx';
         }
 
-        return 'https://vpos.qnbfinansbank.com/Gateway/Default.aspx';
+        return 'https://vpos.qnb.com.tr/Gateway/Default.aspx';
     }
 
     /**

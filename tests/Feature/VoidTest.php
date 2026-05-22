@@ -28,10 +28,10 @@ class VoidTest extends TestCase
 
         $this->assertIsArray($data);
         $this->assertEquals('5', $data['MbrId']);
-        $this->assertEquals('QNBShop001', $data['MerchantId']);
+        $this->assertEquals('QNBShop001', $data['MerchantID']);
         $this->assertEquals('QNBUser', $data['UserCode']);
         $this->assertEquals('QNBPass123', $data['UserPass']);
-        $this->assertEquals('ORDER-12345', $data['OrgOrderId']);
+        $this->assertEquals('ORDER-12345', $data['OrderId']);
         $this->assertEquals(TxnType::VOID, $data['TxnType']);
         $this->assertEquals(SecureType::NON_SECURE, $data['SecureType']);
         $this->assertEquals('949', $data['Currency']);

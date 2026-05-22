@@ -16,9 +16,10 @@ composer require tcgunel/omnipay-qnbfinansbank
 | Method | Description |
 |--------|-------------|
 | `purchase()` | Direct (non-3D) sale or 3D Secure redirect |
-| `completePurchase()` | Complete 3D Secure payment after bank callback |
+| `completePurchase()` | Complete 3D Secure payment after bank callback (with response-hash verification) |
 | `void()` | Cancel/void a transaction |
 | `refund()` | Refund a transaction (full or partial) |
+| `transactionQuery()` | Order inquiry — query the bank-side status of an order |
 
 ## Supported Features
 
@@ -28,9 +29,9 @@ composer require tcgunel/omnipay-qnbfinansbank
 | Non-3D (direct) | Yes |
 | Cancel (void) | Yes |
 | Refund | Yes |
-| BIN lookup | No |
-| Installment query | No |
-| Sale query | No |
+| Order inquiry (payment status) | Yes |
+| BIN lookup | No (not offered by the QNB VPos API) |
+| Installment query | No (not offered by the QNB VPos API) |
 
 ## Usage
 
@@ -108,8 +109,9 @@ if ($response->isSuccessful()) {
 }
 ```
 
-The callback POST fields (`ProcReturnCode`, `AuthCode`, `OrderId`, `ErrMsg`) are read
-directly from `$_POST` by the request internally.
+The full callback POST payload is read directly from `$_POST` by the request.
+`completePurchase()` is successful only when `ProcReturnCode` is `00` **and** the
+QNB response hash verifies — see [Response Hash Verification](#response-hash-verification).
 
 ### Void (Cancel)
 
@@ -142,26 +144,64 @@ if ($response->isSuccessful()) {
 }
 ```
 
-## Hash Algorithm (3D Secure)
+### Order Inquiry (Payment Status)
+
+Query the current bank-side status of an order — useful for reconciliation
+when a 3D callback is never received:
+
+```php
+$response = $gateway->transactionQuery([
+    'transactionId' => 'ORDER-12345',
+    'currency'      => 'TRY',
+])->send();
+
+if ($response->isSuccessful()) {
+    echo 'Order found at the bank.';
+    echo $response->isVoided()   ? ' (voided)'   : '';
+    echo $response->isRefunded() ? ' (refunded)' : '';
+} else {
+    echo 'Not found / failed: ' . $response->getMessage();
+}
+```
+
+## Hash Algorithm
+
+### Request hash (3D Secure)
 
 ```
 SHA1Base64(MbrId + OrderId + PurchAmount + OkUrl + FailUrl + TxnType + InstallmentCount + Rnd + MerchantPass)
 ```
 
-**Note:** `MbrId` is always `5` for QNB Finansbank.
+### Response Hash Verification
+
+After a 3D callback, the response hash is checked to confirm it genuinely
+came from QNB:
+
+```
+SHA1Base64(MerchantId + MerchantPass + OrderId + AuthCode + ProcReturnCode + 3DStatus + ResponseRnd + UserCode)
+```
+
+`completePurchase()->isSuccessful()` returns `true` only when `ProcReturnCode`
+is `00` and this hash matches. Verification is skipped (not failed) when no
+`merchantStorekey` is configured or the bank returns no `ResponseHash`, so a
+genuine payment is never rejected purely because the key is missing.
+
+**Note:** `MbrId` is always `5` for QNB Finansbank. `MerchantPass` is the 3D
+Secure store key (`merchantStorekey`); it is only used for hashing and is
+never transmitted in a request.
 
 ## Endpoints
 
 | Environment | URL |
 |-------------|-----|
-| Test | `https://vpostest.qnbfinansbank.com/Gateway/Default.aspx` |
-| Production | `https://vpos.qnbfinansbank.com/Gateway/Default.aspx` |
+| Test | `https://vpostest.qnb.com.tr/Gateway/Default.aspx` |
+| Production | `https://vpos.qnb.com.tr/Gateway/Default.aspx` |
 
 ## Key Differences from Denizbank
 
 - Uses `MbrId: 5` field in all requests
 - Uses `ErrMsg` instead of `ErrorMessage` for error messages
-- Different endpoint URLs (qnbfinansbank.com vs inter-vpos.com.tr)
+- Different endpoint URLs (`vpos.qnb.com.tr` vs `inter-vpos.com.tr`)
 
 ## Running Tests
 

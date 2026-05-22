@@ -36,7 +36,7 @@ class PurchaseRequest extends RemoteAbstractRequest
     {
         $data = [
             'MbrId' => '5',
-            'MerchantId' => $this->getMerchantId(),
+            'MerchantID' => $this->getMerchantId(),
             'UserCode' => $this->getMerchantUser(),
             'UserPass' => $this->getMerchantPassword(),
             'PurchAmount' => $this->getAmount(),
@@ -64,7 +64,7 @@ class PurchaseRequest extends RemoteAbstractRequest
         $orderId = $this->getOrderId() ?? $this->getTransactionId();
         $amount = $this->getAmount();
         $installment = $this->getInstallment() ?: '0';
-        $rnd = microtime();
+        $rnd = bin2hex(random_bytes(8));
 
         $hash = Helper::hash3D(
             '5',
@@ -76,12 +76,11 @@ class PurchaseRequest extends RemoteAbstractRequest
             $installment,
             $rnd,
             $this->getMerchantStorekey(),
-            $this->getMerchantId(),
         );
 
         $data = [
             'MbrId' => '5',
-            'MerchantId' => $this->getMerchantId(),
+            'MerchantID' => $this->getMerchantId(),
             'UserCode' => $this->getMerchantUser(),
             'UserPass' => $this->getMerchantPassword(),
             'PurchAmount' => $amount,

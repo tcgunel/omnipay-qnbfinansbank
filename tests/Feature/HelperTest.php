@@ -52,7 +52,6 @@ class HelperTest extends TestCase
             '0',
             'random123',
             'StoreKey456',
-            'QNBShop001',
         );
 
         $this->assertNotEmpty($hash);
@@ -77,7 +76,6 @@ class HelperTest extends TestCase
             '0',
             'rnd',
             'key',
-            'shop',
         );
 
         $decoded = base64_decode($hash, true);
@@ -85,5 +83,29 @@ class HelperTest extends TestCase
 
         // SHA1 produces 20 bytes
         $this->assertEquals(20, strlen($decoded));
+    }
+
+    public function test_hash_response()
+    {
+        $hash = Helper::hashResponse(
+            'QNBShop001',
+            'StoreKey456',
+            'ORDER-001',
+            'AUTH123',
+            '00',
+            '1',
+            'rnd-xyz',
+            'QNBUser',
+        );
+
+        $this->assertNotEmpty($hash);
+        $this->assertIsString($hash);
+
+        // Verify it matches manual calculation
+        $hashString = 'QNBShop001' . 'StoreKey456' . 'ORDER-001' . 'AUTH123' . '00' . '1' . 'rnd-xyz' . 'QNBUser';
+        $expectedHash = base64_encode(sha1($hashString, true));
+
+        $this->assertEquals($expectedHash, $hash);
+        $this->assertEquals(20, strlen((string) base64_decode($hash, true)));
     }
 }

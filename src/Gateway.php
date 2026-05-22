@@ -7,6 +7,7 @@ use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\QnbFinansbank\Message\CompletePurchaseRequest;
 use Omnipay\QnbFinansbank\Message\PurchaseRequest;
 use Omnipay\QnbFinansbank\Message\RefundRequest;
+use Omnipay\QnbFinansbank\Message\TransactionQueryRequest;
 use Omnipay\QnbFinansbank\Message\VoidRequest;
 use Omnipay\QnbFinansbank\Traits\PurchaseGettersSetters;
 
@@ -83,5 +84,16 @@ class Gateway extends AbstractGateway
     public function refund(array $options = [])
     {
         return $this->createRequest(RefundRequest::class, $options);
+    }
+
+    /**
+     * Order inquiry — query the current bank-side status of an order.
+     *
+     * @param array<string, mixed> $options
+     * @return AbstractRequest|TransactionQueryRequest
+     */
+    public function transactionQuery(array $options = [])
+    {
+        return $this->createRequest(TransactionQueryRequest::class, $options);
     }
 }

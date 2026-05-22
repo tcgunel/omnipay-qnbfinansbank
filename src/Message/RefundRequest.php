@@ -19,12 +19,12 @@ class RefundRequest extends RemoteAbstractRequest
 
         return [
             'MbrId' => '5',
-            'MerchantId' => $this->getMerchantId(),
+            'MerchantID' => $this->getMerchantId(),
             'UserCode' => $this->getMerchantUser(),
             'UserPass' => $this->getMerchantPassword(),
             'PurchAmount' => $this->getAmount(),
             'Currency' => $this->getCurrencyNumeric(),
-            'OrgOrderId' => $this->getOrderNumber() ?? $this->getTransactionId(),
+            'OrderId' => $this->getOrderNumber() ?? $this->getTransactionId(),
             'TxnType' => TxnType::REFUND,
             'SecureType' => SecureType::NON_SECURE,
             'Lang' => 'TR',

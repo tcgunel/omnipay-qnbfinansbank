@@ -8,9 +8,12 @@ use Omnipay\Common\Message\ResponseInterface;
 class CompletePurchaseRequest extends RemoteAbstractRequest
 {
     /**
-     * Return the callback data from the 3D redirect as-is.
+     * Return the full callback payload from the 3D redirect.
      *
-     * The callback POST contains ProcReturnCode, AuthCode, OrderId, ErrMsg, etc.
+     * QNB posts the complete 3D result (ProcReturnCode, AuthCode, OrderId,
+     * ErrMsg, TransId, HostRefNum, 3DStatus, ResponseRnd, ResponseHash, ...)
+     * back to OkUrl / FailUrl as form data. Every field is captured so the
+     * response can both report and hash-verify the callback.
      *
      * @throws InvalidRequestException
      * @return array<string, mixed>
@@ -19,12 +22,7 @@ class CompletePurchaseRequest extends RemoteAbstractRequest
     {
         $this->validateAll();
 
-        return [
-            'ProcReturnCode' => $this->httpRequest->request->get('ProcReturnCode'),
-            'AuthCode' => $this->httpRequest->request->get('AuthCode'),
-            'OrderId' => $this->httpRequest->request->get('OrderId'),
-            'ErrMsg' => $this->httpRequest->request->get('ErrMsg', ''),
-        ];
+        return $this->httpRequest->request->all();
     }
 
     /**

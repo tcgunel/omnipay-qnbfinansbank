@@ -41,11 +41,12 @@ class Helper
     }
 
     /**
-     * Generate 3D Secure hash for QNB Finansbank VPos.
+     * Generate the 3D Secure request hash for QNB Finansbank VPos.
      *
-     * Hash = base64(SHA1(MbrId + OrderId + PurchAmount + OkUrl + FailUrl + TxnType + InstallmentCount + Rnd + MerchantPass + MerchantId))
+     * Hash = base64(SHA1(MbrId + OrderId + PurchAmount + OkUrl + FailUrl + TxnType + InstallmentCount + Rnd + MerchantPass))
      *
-     * Note: QNB Finansbank uses MerchantPass (storekey) at the end, unlike Denizbank which also includes MerchantId.
+     * MerchantPass (the 3D Secure store key) is only used to build the hash;
+     * it is never sent in the request itself (QNB doc, section 5.2).
      *
      * @param string $mbrId
      * @param string $orderId
@@ -56,7 +57,6 @@ class Helper
      * @param string $installmentCount
      * @param string $rnd
      * @param string $merchantPass
-     * @param string $merchantId
      * @return string
      */
     public static function hash3D(
@@ -69,9 +69,40 @@ class Helper
         string $installmentCount,
         string $rnd,
         string $merchantPass,
-        string $merchantId,
     ): string {
         $hashString = $mbrId . $orderId . $amount . $okUrl . $failUrl . $txnType . $installmentCount . $rnd . $merchantPass;
+
+        return base64_encode(sha1($hashString, true));
+    }
+
+    /**
+     * Generate the expected 3D Secure response hash for QNB Finansbank VPos.
+     *
+     * Hash = base64(SHA1(MerchantId + MerchantPass + OrderId + AuthCode + ProcReturnCode + 3DStatus + ResponseRnd + UserCode))
+     *
+     * Used to confirm a 3D callback genuinely originated from QNB (QNB doc, section 5.2).
+     *
+     * @param string $merchantId
+     * @param string $merchantPass
+     * @param string $orderId
+     * @param string $authCode
+     * @param string $procReturnCode
+     * @param string $threeDStatus
+     * @param string $responseRnd
+     * @param string $userCode
+     * @return string
+     */
+    public static function hashResponse(
+        string $merchantId,
+        string $merchantPass,
+        string $orderId,
+        string $authCode,
+        string $procReturnCode,
+        string $threeDStatus,
+        string $responseRnd,
+        string $userCode,
+    ): string {
+        $hashString = $merchantId . $merchantPass . $orderId . $authCode . $procReturnCode . $threeDStatus . $responseRnd . $userCode;
 
         return base64_encode(sha1($hashString, true));
     }

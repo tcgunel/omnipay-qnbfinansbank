@@ -7,7 +7,13 @@ use Omnipay\Common\Message\ResponseInterface;
 use Omnipay\QnbFinansbank\Constants\SecureType;
 use Omnipay\QnbFinansbank\Constants\TxnType;
 
-class VoidRequest extends RemoteAbstractRequest
+/**
+ * QNB Finansbank order inquiry — "Sipariş Sorgulama" (QNB doc, section 5.19).
+ *
+ * Queries the current bank-side status of a previously submitted order so a
+ * merchant can reconcile payments whose 3D callback was never received.
+ */
+class TransactionQueryRequest extends RemoteAbstractRequest
 {
     /**
      * @throws InvalidRequestException
@@ -22,10 +28,10 @@ class VoidRequest extends RemoteAbstractRequest
             'MerchantID' => $this->getMerchantId(),
             'UserCode' => $this->getMerchantUser(),
             'UserPass' => $this->getMerchantPassword(),
+            'SecureType' => SecureType::INQUIRY,
+            'TxnType' => TxnType::ORDER_INQUIRY,
             'OrderId' => $this->getOrderNumber() ?? $this->getTransactionId(),
-            'TxnType' => TxnType::VOID,
-            'SecureType' => SecureType::NON_SECURE,
-            'Currency' => $this->getCurrencyNumeric(),
+            'Currency' => $this->getCurrencyNumeric() ?? '949',
             'Lang' => 'TR',
         ];
     }
@@ -44,7 +50,7 @@ class VoidRequest extends RemoteAbstractRequest
 
     /**
      * @param array<string, mixed> $data
-     * @return ResponseInterface|VoidResponse
+     * @return ResponseInterface|TransactionQueryResponse
      */
     public function sendData($data)
     {
@@ -55,10 +61,10 @@ class VoidRequest extends RemoteAbstractRequest
 
     /**
      * @param string $data
-     * @return VoidResponse
+     * @return TransactionQueryResponse
      */
-    protected function createResponse($data): VoidResponse
+    protected function createResponse($data): TransactionQueryResponse
     {
-        return $this->response = new VoidResponse($this, $data);
+        return $this->response = new TransactionQueryResponse($this, $data);
     }
 }

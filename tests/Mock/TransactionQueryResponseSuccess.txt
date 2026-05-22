@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Content-Type: text/html;charset=ISO-8859-9
+Content-Length: 512
+
+ProcReturnCode=00;;OrderId=ORDER-12345;;TxnResult=Success;;IsVoided=False;;IsRefunded=False;;AuthCode=QNBAuth001;;ErrMsg=;;
